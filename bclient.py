@@ -1,6 +1,7 @@
 import os
 import requests
 from typing import Optional
+from urllib.parse import urlparse
 
 
 def get_user_info() -> Optional[dict]:
@@ -25,6 +26,20 @@ def shorten_link(token: str, long_url: str) -> Optional[str]:
     response.raise_for_status()
 
     return response.json()['link']
+
+
+def count_clicks(token: str, link: str) -> Optional[int]:
+    if not token:
+        return None
+    parsed = urlparse(link)
+    bitlink = '{}{}'.format(parsed.netloc, parsed.path)
+    url = 'https://api-ssl.bitly.com/v4/bitlinks/{bitlink}/clicks/summary'.format(bitlink=bitlink)
+    headers = {'Authorization': f'Bearer {token}'}
+    payload = {'unit': 'day', 'units': -1}
+    response = requests.get(url, headers=headers, params=payload)
+    response.raise_for_status()
+
+    return response.json()['total_clicks']
 
 
 if __name__ == '__main__':
