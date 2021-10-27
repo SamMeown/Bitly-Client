@@ -42,10 +42,36 @@ def count_clicks(token: str, link: str) -> Optional[int]:
     return response.json()['total_clicks']
 
 
+def is_bitlink(token: str, link: str) -> bool:
+    parsed = urlparse(link)
+    bitlink = '{}{}'.format(parsed.netloc, parsed.path)
+    url = 'https://api-ssl.bitly.com/v4/expand'
+    headers = {'Authorization': f'Bearer {token}'}
+    payload = {'bitlink_id': bitlink}
+    response = requests.post(url, headers=headers, json=payload)
+
+    return response.ok
+
+
 if __name__ == '__main__':
     access_token = os.getenv('GENERAL_TOKEN')
-    url = input('Enter url to shorten: ')
+    url = input('Enter url: ')
     try:
-        print('Bitlink', shorten_link(access_token, url))
-    except requests.exceptions.HTTPError as error:
-        print(f'Failed to shorten link via Bitly:\n{error}')
+        if is_bitlink(access_token, url):
+            try:
+                print('Bitlink has been clicked {} time(s)'.format(count_clicks(access_token, url)))
+            except requests.exceptions.HTTPError as error:
+                if error.response.status_code == 403:
+                    print(f'Failed to count clicks via Bitly: No access to this bitlink')
+                else:
+                    raise
+        else:
+            try:
+                print('Bitlink: {}'.format(shorten_link(access_token, url)))
+            except requests.exceptions.HTTPError as error:
+                if error.response.status_code == 400:
+                    print(f'Failed to shorten link via Bitly: Invalid url')
+                else:
+                    raise
+    except requests.exceptions.RequestException as error:
+        print(f'An error occured during request:\n{error}')
