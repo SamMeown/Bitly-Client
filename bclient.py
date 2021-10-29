@@ -1,7 +1,9 @@
 import os
-import requests
 from typing import Optional
 from urllib.parse import urlparse
+
+import requests
+from dotenv import load_dotenv
 
 
 def get_user_info() -> Optional[dict]:
@@ -73,6 +75,7 @@ def _process_url(token: str, link: str):
 
 
 if __name__ == '__main__':
+    load_dotenv()
     access_token = os.getenv('GENERAL_TOKEN')
     input_url = input('Enter url: ')
     try:
