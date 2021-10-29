@@ -1,3 +1,4 @@
+import argparse
 import os
 from typing import Optional
 from urllib.parse import urlparse
@@ -76,8 +77,15 @@ def _process_url(token: str, link: str):
 
 if __name__ == '__main__':
     load_dotenv()
+
+    parser = argparse.ArgumentParser(
+        description='Simple Bitly client.'
+    )
+    parser.add_argument('--link', help='A link to shorten or to get info on')
+    args = parser.parse_args()
+
     access_token = os.getenv('GENERAL_TOKEN')
-    input_url = input('Enter url: ')
+    input_url = args.link or input('Enter url: ')
     try:
         _process_url(access_token, input_url)
     except requests.exceptions.RequestException as request_error:
