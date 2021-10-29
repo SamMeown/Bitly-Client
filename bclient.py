@@ -81,7 +81,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description='Simple Bitly client.'
     )
-    parser.add_argument('--link', help='A link to shorten or to get info on')
+    parser.add_argument('-l', '--link', help='A link to shorten or to get info on')
     args = parser.parse_args()
 
     access_token = os.getenv('GENERAL_TOKEN')
