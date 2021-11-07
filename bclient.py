@@ -7,12 +7,17 @@ import requests
 from dotenv import load_dotenv
 
 
+def _add_auth_header(headers: dict, token: str):
+    if not token:
+        raise ValueError('Token is not provided or empty')
+    headers['Authorization'] = f'Bearer {token}'
+
+
 def get_user_info() -> Optional[dict]:
     url = 'https://api-ssl.bitly.com/v4/user'
     token = os.getenv('BC_BITLY_GENERAL_TOKEN')
-    if not token:
-        return None
-    headers = {'Authorization': f'Bearer {token}'}
+    headers = {}
+    _add_auth_header(headers, token)
     response = requests.get(url, headers=headers)
     response.raise_for_status()
 
@@ -20,10 +25,9 @@ def get_user_info() -> Optional[dict]:
 
 
 def shorten_link(token: str, long_url: str) -> Optional[str]:
-    if not token:
-        return None
     url = 'https://api-ssl.bitly.com/v4/bitlinks'
-    headers = {'Authorization': f'Bearer {token}'}
+    headers = {}
+    _add_auth_header(headers, token)
     payload = {'long_url': long_url}
     response = requests.post(url, headers=headers, json=payload)
     response.raise_for_status()
@@ -32,12 +36,11 @@ def shorten_link(token: str, long_url: str) -> Optional[str]:
 
 
 def count_clicks(token: str, link: str) -> Optional[int]:
-    if not token:
-        return None
     parsed = urlparse(link)
     bitlink = '{}{}'.format(parsed.netloc, parsed.path)
     url = 'https://api-ssl.bitly.com/v4/bitlinks/{bitlink}/clicks/summary'.format(bitlink=bitlink)
-    headers = {'Authorization': f'Bearer {token}'}
+    headers = {}
+    _add_auth_header(headers, token)
     payload = {'unit': 'day', 'units': -1}
     response = requests.get(url, headers=headers, params=payload)
     response.raise_for_status()
@@ -49,7 +52,8 @@ def is_bitlink(token: str, link: str) -> bool:
     parsed = urlparse(link)
     bitlink = '{}{}'.format(parsed.netloc, parsed.path)
     url = 'https://api-ssl.bitly.com/v4/expand'
-    headers = {'Authorization': f'Bearer {token}'}
+    headers = {}
+    _add_auth_header(headers, token)
     payload = {'bitlink_id': bitlink}
     response = requests.post(url, headers=headers, json=payload)
 
