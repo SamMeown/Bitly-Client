@@ -13,17 +13,6 @@ def _add_auth_header(headers: dict, token: str):
     headers['Authorization'] = f'Bearer {token}'
 
 
-def get_user_info() -> Optional[dict]:
-    url = 'https://api-ssl.bitly.com/v4/user'
-    token = os.getenv('BC_BITLY_GENERAL_TOKEN')
-    headers = {}
-    _add_auth_header(headers, token)
-    response = requests.get(url, headers=headers)
-    response.raise_for_status()
-
-    return response.json()
-
-
 def shorten_link(token: str, long_url: str) -> Optional[str]:
     url = 'https://api-ssl.bitly.com/v4/bitlinks'
     headers = {}
