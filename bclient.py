@@ -56,25 +56,6 @@ def is_bitlink(token: str, link: str) -> bool:
     return response.ok
 
 
-def _process_url(token: str, link: str):
-    if is_bitlink(token, link):
-        try:
-            print('Bitlink has been clicked {} time(s)'.format(count_clicks(token, link)))
-        except requests.exceptions.HTTPError as error:
-            if error.response.status_code == 403:
-                print(f'Failed to count clicks via Bitly: No access to this bitlink')
-            else:
-                raise
-    else:
-        try:
-            print('Bitlink: {}'.format(shorten_link(token, link)))
-        except requests.exceptions.HTTPError as error:
-            if error.response.status_code == 400:
-                print(f'Failed to shorten link via Bitly: Invalid url')
-            else:
-                raise
-
-
 if __name__ == '__main__':
     load_dotenv()
 
@@ -86,7 +67,19 @@ if __name__ == '__main__':
 
     access_token = os.getenv('BC_BITLY_GENERAL_TOKEN')
     input_url = args.link or input('Enter url: ')
-    try:
-        _process_url(access_token, input_url)
-    except requests.exceptions.RequestException as request_error:
-        print(f'An error occurred during request:\n{request_error}')
+    if is_bitlink(access_token, input_url):
+        try:
+            print('Bitlink has been clicked {} time(s)'.format(count_clicks(access_token, input_url)))
+        except requests.exceptions.HTTPError as error:
+            if error.response.status_code == 403:
+                print(f'Failed to count clicks via Bitly: No access to this bitlink')
+            else:
+                raise
+    else:
+        try:
+            print('Bitlink: {}'.format(shorten_link(access_token, input_url)))
+        except requests.exceptions.HTTPError as error:
+            if error.response.status_code == 400:
+                print(f'Failed to shorten link via Bitly: Invalid url')
+            else:
+                raise
