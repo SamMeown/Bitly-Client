@@ -7,9 +7,9 @@ Python3 should already be installed. Then open terminal window and use `pip` to 
 ```
 pip install -r requirements.txt
 ```
-Client will need yout Bitly [*access token*](https://app.bitly.com/settings/api) to communicate with bitly API. You can setup your token using environment valiable `GENERAL_TOKEN`, or just create `.env` file and place it there like this:  
+Client will need yout Bitly [*access token*](https://app.bitly.com/settings/api) to communicate with bitly API. You can setup your token using environment valiable `BC_BITLY_GENERAL_TOKEN`, or just create `.env` file and place it there like this:  
 ```
-GENERAL_TOKEN=<Your Token>
+BC_BITLY_GENERAL_TOKEN=<Your Token>
 ```
 
 ### Usage

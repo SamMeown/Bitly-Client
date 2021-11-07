@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 
 def get_user_info() -> Optional[dict]:
     url = 'https://api-ssl.bitly.com/v4/user'
-    token = os.getenv('GENERAL_TOKEN')
+    token = os.getenv('BC_BITLY_GENERAL_TOKEN')
     if not token:
         return None
     headers = {'Authorization': f'Bearer {token}'}
@@ -84,7 +84,7 @@ if __name__ == '__main__':
     parser.add_argument('-l', '--link', help='A link to shorten or to get info on')
     args = parser.parse_args()
 
-    access_token = os.getenv('GENERAL_TOKEN')
+    access_token = os.getenv('BC_BITLY_GENERAL_TOKEN')
     input_url = args.link or input('Enter url: ')
     try:
         _process_url(access_token, input_url)
