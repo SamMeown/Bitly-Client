@@ -7,16 +7,15 @@ import requests
 from dotenv import load_dotenv
 
 
-def _add_auth_header(headers: dict, token: str):
+def _auth_header(token: str):
     if not token:
         raise ValueError('Token is not provided or empty')
-    headers['Authorization'] = f'Bearer {token}'
+    return {'Authorization': f'Bearer {token}'}
 
 
 def shorten_link(token: str, long_url: str) -> Optional[str]:
     url = 'https://api-ssl.bitly.com/v4/bitlinks'
-    headers = {}
-    _add_auth_header(headers, token)
+    headers = {**_auth_header(token)}
     payload = {'long_url': long_url}
     response = requests.post(url, headers=headers, json=payload)
     response.raise_for_status()
@@ -28,8 +27,7 @@ def count_clicks(token: str, link: str) -> Optional[int]:
     parsed = urlparse(link)
     bitlink = '{}{}'.format(parsed.netloc, parsed.path)
     url = 'https://api-ssl.bitly.com/v4/bitlinks/{bitlink}/clicks/summary'.format(bitlink=bitlink)
-    headers = {}
-    _add_auth_header(headers, token)
+    headers = {**_auth_header(token)}
     payload = {'unit': 'day', 'units': -1}
     response = requests.get(url, headers=headers, params=payload)
     response.raise_for_status()
@@ -41,8 +39,7 @@ def is_bitlink(token: str, link: str) -> bool:
     parsed = urlparse(link)
     bitlink = '{}{}'.format(parsed.netloc, parsed.path)
     url = 'https://api-ssl.bitly.com/v4/expand'
-    headers = {}
-    _add_auth_header(headers, token)
+    headers = {**_auth_header(token)}
     payload = {'bitlink_id': bitlink}
     response = requests.post(url, headers=headers, json=payload)
 
